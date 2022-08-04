@@ -1,19 +1,28 @@
-# Accessor Methods
+# Accessor Methods and Mutator Methods
 
 ## Learning Goals
 
-- Explain constructors
-- Create constructors in Java
+- Explain Accessor Methods
+- Explain Mutator Methods
+- Discuss IntelliJ Features
 
 ## Introduction
 
-A **constructor** is a specific kind of method that is called when an object is
-instantiated. Constructors, like methods, can have parameters. Unlike methods,
-however, constructors do not have an explicit return type because they always
-return an object of the type of the class they are defined in.
+We have heard of accessor methods before in the Access Modifiers Lesson.
+Access methods and mutator methods are instance methods but hold an
+important purpose when accessing private instance variables. Let us
+dive more into what these methods are and how they are useful!
 
-Let's consider a `Student` class as an example, with fields for their name and
-major information:
+## Accessor Methods
+
+An **accessor method** is a public method that is used to retrieve the contents
+of a private instance variable. This means that the return type will be the
+same type as the private instance variable of interest. Accessor methods
+are also referred to as **getters** as the method name conventionally starts
+with the word "get".
+
+Let's review the `Student` class again and see how we could get the first
+name of the student using an accessor method.
 
 ```java
 public class Student {
@@ -24,89 +33,158 @@ public class Student {
     public Student(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.major = "Undeclared";
+    }
+    
+    public Student(String firstName, String lastName, String major) {
+       this(firstName, lastName);
+       this.major = major;
+    }
+
+    public String getFirstName() {
+       return firstName;
     }
 }
 ```
 
-In this example, the only constructor we are providing is one that takes in both
-the `firstName` and the `lastName` as parameters. We will look at a different
-implementation of this constructor as well as another constructor later, but for
-now let's inspect the structure of this one constructor:
+In the code above, we see that we defined the accessor method `getFirstName()`.
+Again, it is a convention in Java to use the word "get" in the accessor method
+name. This method will return the `String` value of the variable
+`firstName`. This is helpful in case a `Student` object is defined in another
+class, and it wants to know the `firstName` of the `Student`.
 
-1. As stated, the constructor does not specify a return type because it always
-   returns an object of the type of the class it's defined in, so in this case
-   our constructor will return an object of type `Student`.
-2. The `this` keyword is used to make a reference to the instance of the
-   `Student` class that we are in the process of constructing. We need to use it
-   here to make a distinction between the `firstName` variable that belongs to
-   this instance we are building vs the `firstName` variable that was passed in
-   as a variable to the constructor.
-3. Using the `this` keyword, we initialize the value of the `firstName` variable
-   of the `Student` instance we're building with the value of the `firstName`
-   variable that was passed into the constructor. And we do the same thing with
-   `lastName`.
+## Mutator Methods
 
-By convention, constructor parameters usually use the same variable names as the
-properties in the class they are meant to initialize, which is why we need to
-use the `this` keyword to clearly indicate which variable we are referring to in
-the constructor. It is possible, however, to use different names for the
-parameters into the constructor, in which case the `this` keyword does not need
-to be used because there is no ambiguity in the variable names.
+A **mutator method** is a public method that is used to set the contents of a
+private instance variable. Unlike accessor methods, it will not return anything,
+so it will have the `void` return type. But it will take in a parameter to
+assign the variable appropriately. The parameter should have the same type as
+the private instance variable of interest. Usually it will also have the same
+variable name as well. Mutator methods are also referred to as **setters** as
+the method name conventionally starts with the word "set".
 
-Here is a version of the constructor that does that, just for reference. Note
-that we will continue to use the generally accepted naming convention in all
-subsequent examples.
+In our `Student` class, we have a `major` attribute that can be defaulted to
+the value of `undeclared`. But what if the student eventually decides to
+declare a major? We don't want to re-construct the `Student` object. Instead,
+we can use a mutator method!
 
 ```java
-public Student(String inputFirstName, String inputLastName) {
-  firstName = inputFirstName;
-  lastName = inputLastName;
-}
-```
+public class Student {
+    private String firstName;
+    private String lastName;
+    private String major;
 
-You might have noticed that neither version of the constructors we have shared so
-far assign any value to the `major` variable. This not a good behavior, as we
-should always try to be explicit about values for all our fields and include
-default values if none are provided through the constructor.
-
-There are 2 important things to note here:
-
-1. Not all fields can have default values - for example, what could a "default"
-   first name and last name possibly be for a student? Sure it could be "John
-   Doe" or "Jane Doe", but that doesn't seem very helpful in the handling of
-   student information.
-2. Some fields do make sense to have default value - for example, we could
-   easily imagine that a student could be initialized in our system before they
-   have a chance to define their major. In which case, we would default their
-   `major` field to a value that indicates that they haven't picked a major yet.
-
-Here is an example of our constructor that does exactly that:
-
-```java
-public Student(String firstName, String lastName) {
-  this.firstName = firstName;
-  this.lastName = lastName;
-  this.major = "Undeclared";
-}
-```
-
-We also have the ability to have multiple constructors
-in a single class. In this example, we can add a constructor that accepts a
-declared major in addition to the student's first and last name:
-
-```java
     public Student(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.major = "Undeclared";
     }
-
+    
     public Student(String firstName, String lastName, String major) {
-        this(firstName, lastName);
+       this(firstName, lastName);
+       this.major = major;
+    }
+
+    public String getFirstName() {
+       return firstName;
+    }
+    
+    public void setMajor(String major) {
         this.major = major;
     }
+}
 ```
 
-Note that the new constructor makes use of the previously defined constructor to
-initialize the two fields that were already supported and then proceeds to
-initialize the additional field for which it received a value as a parameter.
+In the code above, we see that we defined the mutator method `setMajor()`.
+Again, it is a convention in Java to use the word "set" in the mutator method
+name. This method will make use of the `this` keyword again to assign the
+instance variable to the local variable that came in as a parameter. We can
+now use this method to set a `major` on a `Student` object even after the
+object has been constructed.
+
+Let's add getters and setters to the rest of the private instance variables,
+as this is typically a good practice to follow when creating a class.
+
+## Accessor Methods and Mutator Methods in IntelliJ
+
+The nice thing about using the IntelliJ IDE is that the IDE can actually help
+us generate these accessor and mutator methods a little quicker.
+
+In IntelliJ, if you right-click on the instance variable, you will be prompted
+with this menu:
+
+![generate-method](https://curriculum-content.s3.amazonaws.com/java-mod-1/accessor-methods/Generate-Method.png)
+
+When in that menu, click on the `Generate...` option or use the keyboard
+shortcut of `Alt+Insert`.
+
+Once you are there, a few more options are listed out. These are different
+methods that we could generate! Let's start with adding a getter to the
+`major` attribute. To do so, click on `Getter` from the option list. It will
+then create the accessor method needed for the `major` variable!
+
+![generate-getter](https://curriculum-content.s3.amazonaws.com/java-mod-1/accessor-methods/Generate-Getter-IntelliJ.png)
+
+We can perform the same operation on the `firstName` attribute to create a
+setter method. Perform the right-click operation again. But this time instead
+of clicking on the `Getter` option from the list, select the `Setter` option.
+This will create the mutator method needed for the `firstName` variable.
+
+![generate-setter](https://curriculum-content.s3.amazonaws.com/java-mod-1/accessor-methods/Generate-Setter-IntelliJ.png)
+
+We haven't even touched our `lastName` attribute. Both the getter and the setter
+methods need to be added to the `Student` class still. We can actually generate
+both those methods at once through IntelliJ! Perform the right-click
+operation one last time. This time, we will select the `Getter and Setter`
+option from the `Generate` option list. This will create both the accessor and
+the mutator methods needed for the `lastName` variable.
+
+![generate-getter-setter](https://curriculum-content.s3.amazonaws.com/java-mod-1/accessor-methods/Generate-Getter-Setter-IntelliJ.png)
+
+Typically, when we create getters and setters, we will want to organize them in
+a certain way in our code. How to exactly organize them can be debated. But the
+consensus is to keep the getters and setters for each instance variable
+together. So the `Student` class may look like this:
+
+```java
+public class Student {
+    private String firstName;
+    private String lastName;
+    private String major;
+
+    public Student(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.major = "Undeclared";
+    }
+    
+    public Student(String firstName, String lastName, String major) {
+       this(firstName, lastName);
+       this.major = major;
+    }
+
+    public String getFirstName() {
+       return firstName;
+    }
+    
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    
+    public String getMajor() {
+        return major;
+    }
+    
+    public void setMajor(String major) {
+        this.major = major;
+    }
+}
+```
